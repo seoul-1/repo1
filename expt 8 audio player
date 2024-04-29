@@ -68,6 +68,19 @@ public class MainActivity extends AppCompatActivity {
 ********************activityMain.xml********************
 
  <Button
+       android:id="@+id/Btnplay"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="52dp"
+       android:text="Play"
+       android:onClick="PlayMusic"
+       app:layout_constraintHorizontal_bias="0.432"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       />
+
+   <Button
        android:id="@+id/Btnpause"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
