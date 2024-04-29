@@ -1,0 +1,137 @@
+expt 7 
+image slider 
+
+******************activity_main.xml***************
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.denzcoskun.imageslider.ImageSlider
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/slider1"
+        >
+
+    </com.denzcoskun.imageslider.ImageSlider>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+**********************MainActivity.java****************
+
+
+package com.example.exp7;
+
+import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.denzcoskun.imageslider.*;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        ImageSlider slider = findViewById(R.id.slider1);
+        List<SlideModel> l =new ArrayList<>();
+
+        l.add(new SlideModel(R.drawable.img1,"1", ScaleTypes.FIT));
+        l.add(new SlideModel(R.drawable.img2,"1", ScaleTypes.FIT));
+        l.add(new SlideModel(R.drawable.img3,"1", ScaleTypes.FIT));
+        l.add(new SlideModel(R.drawable.img4,"1", ScaleTypes.FIT));
+
+        slider.setImageList(l);
+    }
+}
+
+
+************************build.gradle.kts************************
+
+plugins {
+    alias(libs.plugins.androidApplication)
+}
+
+android {
+    namespace = "com.example.exp7"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.exp7"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    implementation(libs.pt)
+}
+
+
+****************************setting.gradle.kts*********************** (inside gradle scripts)
+
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://jitpack.io")
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
+}
+
+rootProject.name = "Exp7"
+include(":app")

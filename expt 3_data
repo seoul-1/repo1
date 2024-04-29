@@ -1,0 +1,185 @@
+Exp3
+insertion and retrival of data
+---------------------------------------------------------
+
+***************************MainActivity.java********************************
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.view.View;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    EditText name, pass, repass;
+    Button submit;
+
+    DBHelper db;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        db=new DBHelper(this);
+        name=findViewById(R.id.Username);
+        pass=findViewById(R.id.Password);
+        repass=findViewById(R.id.ConfirmPassword);
+        submit=findViewById(R.id.Submit);
+
+    }
+
+    public void ClickButton(View view) {
+
+        String n=name.getText().toString();
+        String p=pass.getText().toString();
+        String rp=repass.getText().toString();
+
+        if(p.equals(rp))
+        {
+            if(db.checkusername(n)==false)
+            {
+                if(db.insertdata(n, p)==true)
+                {
+                    Toast.makeText(MainActivity.this, "sucess", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "unscucessful", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                Toast.makeText(MainActivity.this, "User already Exists", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            Toast.makeText(MainActivity.this, "UnSuccess", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+
+****************Activity_main.xml********************
+
+ <EditText
+        android:id="@+id/Username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:hint="Username"
+        android:ems="10"
+        android:text=""
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+
+    <EditText
+        android:id="@+id/Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:hint="Password"
+        android:ems="10"
+        android:text=""
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/Username"
+        app:layout_constraintEnd_toEndOf="@+id/Username"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/Username"
+        />
+
+    <EditText
+        android:id="@+id/ConfirmPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:hint="Confirm Password"
+        android:ems="10"
+        android:text=""
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/Password"
+        app:layout_constraintEnd_toEndOf="@+id/Password"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/Password"
+        />
+
+    <Button
+        android:id="@+id/Submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="Submit"
+        android:onClick="ClickButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintTop_toBottomOf="@+id/ConfirmPassword"
+        />
+
+*******************DBHelper.java************************
+
+package com.example.expt3;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class DBHelper extends SQLiteOpenHelper{
+
+
+    public DBHelper(@Nullable Context context) {
+        super(context, "login.db", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table users(username text primary key, password text)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table if exists users");
+    }
+
+    public Boolean checkusername(String name)
+    {
+        SQLiteDatabase db= this.getWritableDatabase();
+
+        Cursor cursor= db.rawQuery("select * from users where username=?" , new String[]{name});
+
+        if(cursor.getCount()>0) return true;
+        return false;
+    }
+
+    public Boolean insertdata(String name, String password)
+    {
+        SQLiteDatabase db= this.getWritableDatabase();
+        ContentValues cv= new ContentValues();
+
+        cv.put("username", name);
+        cv.put("password", password);
+
+        long rs =db.insert("users", null, cv);
+        if(rs==-1) return false;
+        return true;
+    }
+}
+
