@@ -2,7 +2,8 @@ Exp9 : External
 ----------------------------------------------
 
 **********************MainActivity.java************************************
-package com.example.exp9;
+package com.example.expt9_external;
+
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String FILE_NAME ="example.txt";
+    private static final String FILE_NAME = "example.txt";
     EditText mEditText;
 
     @Override
@@ -33,70 +34,67 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        mEditText=findViewById(R.id.edit_text);
+        mEditText = findViewById(R.id.edit_text);
     }
 
     public void Save(View view) {
         String text = mEditText.getText().toString();
-         File file =new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "example.txt");
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), FILE_NAME);
         FileOutputStream fos = null;
 
         try {
-             fos = new FileOutputStream(file);
-//            fos= openFileOutput(FILE_NAME, MODE_PRIVATE);
+            fos = new FileOutputStream(file);
             fos.write(text.getBytes());
             mEditText.getText().clear();
-            Toast.makeText(this, "Saved to" + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            Toast.makeText(this, "Saved to " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving file", Toast.LENGTH_SHORT).show();
         } finally {
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         }
     }
 
     public void Load(View view) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), FILE_NAME);
 
-        FileInputStream fis = null;
-         File file =new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "example.txt");
+        if (file.exists()) {
+            FileInputStream fis = null;
 
-        try {
-            fis=new FileInputStream(file);
-            fis = openFileInput(FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader br = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String text;
-            while ((text = br.readLine()) != null) {
-                sb.append(text).append("\n");
-            }
-            mEditText.setText(sb.toString());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            try {
+                fis = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader br = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                mEditText.setText(sb.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error loading file", Toast.LENGTH_SHORT).show();
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+        } else {
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
         }
-
     }
+
 }
-
-
-
 *****************************************activity_main.xml***************************************
 
 <?xml version="1.0" encoding="utf-8"?>
